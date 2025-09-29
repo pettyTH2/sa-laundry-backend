@@ -16,3 +16,11 @@ type CouponRepository interface {
 	GetAllCoupons() ([]entity.Coupon, error)
 	Update(coupon *entity.Coupon) error
 }
+
+type UserCouponRepository interface {
+	CreateUserCoupon(userCoupon *entity.UserCoupon) error
+	GetByUserID(userID int) ([]entity.UserCoupon, error)
+	GetByCouponID(couponID int) ([]entity.UserCoupon, error)
+	GetAllUserCoupons() ([]entity.UserCoupon, error)
+	Update(userCoupon *entity.UserCoupon) error
+}

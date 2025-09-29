@@ -19,18 +19,23 @@ func main() {
 
 	userRepo := postgres.NewUserRepository(db)
 	couponRepo := postgres.NewCouponRepository(db)
+	userCouponRepo := postgres.NewUserCouponRepository(db)
 
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	couponUsecase := usecase.NewCouponUsecase(couponRepo)
+	userCouponUsecase := usecase.NewUserCouponUsecase(userCouponRepo)
 
 	userHandler := handler.NewUserHandler(*userUsecase)
 	couponHandler := handler.NewCouponHandler(*couponUsecase)
+	userCouponHandler := handler.NewUserCouponHandler(*userCouponUsecase)
 
 	app := fiber.New()
 
 	handlers := &router.Handlers{
 		User: userHandler,
 		Coupon: couponHandler,
+		UserCoupon: userCouponHandler,
+
 	}
 	
 	router.SetupRoutes(app, handlers)
