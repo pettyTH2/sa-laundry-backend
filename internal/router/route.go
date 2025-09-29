@@ -9,6 +9,7 @@ type Handlers struct {
 	Coupon *handler.CouponHandler
 	UserCoupon *handler.UserCouponHandler
 	Cloth *handler.ClothHandler
+	ClothList *handler.ClothListHandler
 }
 
 func SetupRoutes(app *fiber.App, h *Handlers) {
@@ -38,4 +39,9 @@ func SetupRoutes(app *fiber.App, h *Handlers) {
 	cloths.Get("/category/:category", h.Cloth.GetClothsByCategory)
 	cloths.Get("/", h.Cloth.GetAllCloths)
 	cloths.Put("/:id", h.Cloth.UpdateCloth)
+
+	clothLists := app.Group("/cloth_lists")
+	clothLists.Post("/", h.ClothList.CreateClothList)
+	clothLists.Get("/order/:order_id", h.ClothList.GetClothListsByOrderID)
+	clothLists.Put("/:id", h.ClothList.UpdateClothList)
 }
