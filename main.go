@@ -20,14 +20,17 @@ func main() {
 	userRepo := postgres.NewUserRepository(db)
 	couponRepo := postgres.NewCouponRepository(db)
 	userCouponRepo := postgres.NewUserCouponRepository(db)
+	clothRepo := postgres.NewClothRepository(db)
 
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	couponUsecase := usecase.NewCouponUsecase(couponRepo)
 	userCouponUsecase := usecase.NewUserCouponUsecase(userCouponRepo)
+	clothUsecase := usecase.NewClothUsecase(clothRepo)
 
 	userHandler := handler.NewUserHandler(*userUsecase)
 	couponHandler := handler.NewCouponHandler(*couponUsecase)
 	userCouponHandler := handler.NewUserCouponHandler(*userCouponUsecase)
+	clothHandler := handler.NewClothHandler(*clothUsecase)
 
 	app := fiber.New()
 
@@ -35,7 +38,7 @@ func main() {
 		User: userHandler,
 		Coupon: couponHandler,
 		UserCoupon: userCouponHandler,
-
+		Cloth: clothHandler,
 	}
 	
 	router.SetupRoutes(app, handlers)

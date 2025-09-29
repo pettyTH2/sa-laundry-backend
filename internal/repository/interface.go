@@ -24,3 +24,10 @@ type UserCouponRepository interface {
 	GetAllUserCoupons() ([]entity.UserCoupon, error)
 	Update(userCoupon *entity.UserCoupon) error
 }
+
+type ClothRepository interface {
+	CreateCloth(cloth *entity.Cloth) error
+	GetByCategory(catagory string) ([]entity.Cloth, error)
+	GetAllCloths() ([]entity.Cloth, error)
+	Update(cloth *entity.Cloth) error
+}
