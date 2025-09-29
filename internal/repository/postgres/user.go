@@ -30,6 +30,12 @@ func (r *UserRepository) GetByPhoneNumber(phoneNumber string) (*entity.User, err
 	return &user, err
 }
 
+func (r *UserRepository) GetAllUsers() ([]entity.User, error) {
+	var users []entity.User
+	err := r.db.Find(&users).Error
+	return users, err
+}
+
 func (r *UserRepository) Update(user *entity.User) error {
 	return r.db.Save(user).Error
 }

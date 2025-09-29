@@ -25,6 +25,10 @@ func (uc *UserUsecase) GetByPhoneNumber(phoneNumber string) (*entity.User, error
 	return uc.userRepo.GetByPhoneNumber(phoneNumber)
 }
 
+func (uc *UserUsecase) GetAllUsers() ([]entity.User, error) {
+	return uc.userRepo.GetAllUsers()
+}
+
 func (uc *UserUsecase) UpdateUser(user *entity.User) error {
 	return uc.userRepo.Update(user)
 }

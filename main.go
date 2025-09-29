@@ -5,7 +5,7 @@ import (
 	"laundry-backend/internal/handler"
 	"laundry-backend/internal/repository/postgres"
 	"laundry-backend/internal/usecase"
-	"laundry-backend/internal/routes"
+	"laundry-backend/internal/router"
 	"log"
 	"github.com/gofiber/fiber/v2"
 )
@@ -23,10 +23,10 @@ func main() {
 
 	app := fiber.New()
 
-	handlers := &routes.Handlers{
+	handlers := &router.Handlers{
 		User: userHandler,
 	}
 	
-	routes.SetupRoutes(app, handlers)
+	router.SetupRoutes(app, handlers)
 	log.Fatal(app.Listen(":3000"))
 }

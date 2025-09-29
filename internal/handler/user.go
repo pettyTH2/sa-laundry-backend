@@ -49,6 +49,14 @@ func (h *UserHandler) GetUserByPhone(c *fiber.Ctx) error {
     return c.JSON(user)
 }
 
+func (h *UserHandler) GetAllUsers(c *fiber.Ctx) error {
+	users, err := h.userUsecase.GetAllUsers()
+	if err != nil {	
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(users)
+}
+
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.Atoi(idParam)
