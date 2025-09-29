@@ -37,3 +37,10 @@ type ClothListRepository interface {
 	GetByOrderID(orderID int) ([]entity.ClothList, error)
 	Update(clothList *entity.ClothList) error
 }
+
+type OrderRepository interface {
+	CreateOrder(order *entity.Order) error
+	GetByUserID(userID int) ([]entity.Order, error)
+	GetAllOrders() ([]entity.Order, error)
+	Update(order *entity.Order) error
+}

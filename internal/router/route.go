@@ -10,6 +10,7 @@ type Handlers struct {
 	UserCoupon *handler.UserCouponHandler
 	Cloth *handler.ClothHandler
 	ClothList *handler.ClothListHandler
+	Order *handler.OrderHandler
 }
 
 func SetupRoutes(app *fiber.App, h *Handlers) {
@@ -44,4 +45,10 @@ func SetupRoutes(app *fiber.App, h *Handlers) {
 	clothLists.Post("/", h.ClothList.CreateClothList)
 	clothLists.Get("/order/:order_id", h.ClothList.GetClothListsByOrderID)
 	clothLists.Put("/:id", h.ClothList.UpdateClothList)
+
+	orders := app.Group("/orders")
+	orders.Post("/", h.Order.CreateOrder)
+	orders.Get("/user/:user_id", h.Order.GetOrdersByUserID)
+	orders.Get("/", h.Order.GetAllOrders)
+	orders.Put("/:id", h.Order.UpdateOrder)
 }
