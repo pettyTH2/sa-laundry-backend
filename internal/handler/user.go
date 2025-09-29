@@ -30,16 +30,16 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 
 func (h *UserHandler) GetUserByRole(c *fiber.Ctx) error {
     role := c.Params("role")
-    users, err := h.userUsecase.GetByRole(role)
+    users, err := h.userUsecase.GetUserByRole(role)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
     }
     return c.JSON(users)
 }
 
-func (h *UserHandler) GetUserByPhone(c *fiber.Ctx) error {
+func (h *UserHandler) GetUserByPhoneNumber(c *fiber.Ctx) error {
     phoneNumber := c.Params("phone_number")
-    user, err := h.userUsecase.GetByPhoneNumber(phoneNumber)
+    user, err := h.userUsecase.GetUserByPhoneNumber(phoneNumber)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
     }

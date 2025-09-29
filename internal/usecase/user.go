@@ -17,11 +17,11 @@ func (uc *UserUsecase) CreateUser(user *entity.User) error {
 	return uc.userRepo.CreateUser(user)
 }
 
-func (uc *UserUsecase) GetByRole(role string) ([]entity.User, error) {
+func (uc *UserUsecase) GetUserByRole(role string) ([]entity.User, error) {
 	return uc.userRepo.GetByRole(role)
 }
 
-func (uc *UserUsecase) GetByPhoneNumber(phoneNumber string) (*entity.User, error) {
+func (uc *UserUsecase) GetUserByPhoneNumber(phoneNumber string) (*entity.User, error) {
 	return uc.userRepo.GetByPhoneNumber(phoneNumber)
 }
 

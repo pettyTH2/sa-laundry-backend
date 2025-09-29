@@ -9,3 +9,10 @@ type UserRepository interface {
 	GetAllUsers() ([]entity.User, error)
 	Update(user *entity.User) error
 }
+
+type CouponRepository interface {
+	CreateCoupon(coupon *entity.Coupon) error
+	GetByID(id int) (*entity.Coupon, error)
+	GetAllCoupons() ([]entity.Coupon, error)
+	Update(coupon *entity.Coupon) error
+}
