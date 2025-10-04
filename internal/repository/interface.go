@@ -4,6 +4,7 @@ import "laundry-backend/internal/entity"
 
 type UserRepository interface {
 	CreateUser(user *entity.User) error
+	UserLogin(phoneNumber, password string) (*entity.User, error)
 	GetByRole(role string) ([]entity.User, error)
 	GetByPhoneNumber(phoneNumber string) (*entity.User, error)
 	GetAllUsers() ([]entity.User, error)

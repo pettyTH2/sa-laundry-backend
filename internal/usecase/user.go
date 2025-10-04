@@ -17,6 +17,10 @@ func (uc *UserUsecase) CreateUser(user *entity.User) error {
 	return uc.userRepo.CreateUser(user)
 }
 
+func (uc *UserUsecase) UserLogin(phoneNumber, password string) (*entity.User, error) {
+	return uc.userRepo.UserLogin(phoneNumber, password)
+}
+
 func (uc *UserUsecase) GetUserByRole(role string) ([]entity.User, error) {
 	return uc.userRepo.GetByRole(role)
 }

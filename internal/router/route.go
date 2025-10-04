@@ -2,6 +2,7 @@ package router
 import (
 	"laundry-backend/internal/handler"
 	"github.com/gofiber/fiber/v2"
+	"laundry-backend/internal/middleware"
 )
 
 type Handlers struct {
@@ -16,7 +17,9 @@ type Handlers struct {
 func SetupRoutes(app *fiber.App, h *Handlers) {
 
 	users := app.Group("/users")
-	users.Post("/", h.User.CreateUser)
+	users.Use("/register", middleware.CreateMemberAuth)
+	users.Post("/register", h.User.CreateUser)
+	users.Post("/login", h.User.UserLogin)
 	users.Get("/role/:role", h.User.GetUserByRole)
 	users.Get("/phone/:phone_number", h.User.GetUserByPhoneNumber)
 	users.Get("/", h.User.GetAllUsers)

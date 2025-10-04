@@ -3,9 +3,15 @@ package handler
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
+	"laundry-backend/internal/config"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
+	"time"
 	"strconv"
 )
+
+var jwtConfig = config.LoadJWTConfig()
+var jwtSecretKey = []byte(jwtConfig.SecretKey)
 
 type UserHandler struct {
 	userUsecase usecase.UserUsecase
@@ -26,6 +32,42 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(user)
+}
+
+func (h *UserHandler) UserLogin(c *fiber.Ctx) error {
+	var loginData struct {
+		PhoneNumber string `json:"phone_number"`
+		Password    string `json:"password"`
+	}
+
+	if err := c.BodyParser(&loginData); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+	}
+
+	user, err := h.userUsecase.UserLogin(loginData.PhoneNumber, loginData.Password)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid phone number or password"})
+	}
+
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["phone_number"] = user.PhoneNumber
+	claims["role"] = user.Role	
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+
+	tokenString, err := token.SignedString(jwtSecretKey)
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	c.Cookie(&fiber.Cookie{
+    Name:     "jwt",
+    Value:    tokenString,
+    Expires:  time.Now().Add(time.Hour * 72),
+    HTTPOnly: true,
+  	})
+
+	return c.JSON(fiber.Map{"message": "successfully logged in"})
 }
 
 func (h *UserHandler) GetUserByRole(c *fiber.Ctx) error {
