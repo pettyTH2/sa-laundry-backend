@@ -67,7 +67,7 @@ func (h *UserHandler) UserLogin(c *fiber.Ctx) error {
     HTTPOnly: true,
   	})
 
-	return c.JSON(fiber.Map{"message": "successfully logged in"})
+	return c.JSON(user)
 }
 
 func (h *UserHandler) GetUserByRole(c *fiber.Ctx) error {
