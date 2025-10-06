@@ -4,6 +4,7 @@ import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
 	"github.com/gofiber/fiber/v2"
+	"time"
 	"strconv"
 )
 
@@ -20,9 +21,14 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	if err := c.BodyParser(&order); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
+
+	order.OrderDate = time.Now().Format("02/01/2006")
+	order.PickupDate = time.Now().AddDate(0, 0, 3).Format("02/01/2006")
+
 	if err := h.orderUsecase.CreateOrder(&order); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
+
 	return c.Status(fiber.StatusCreated).JSON(order)
 }
 

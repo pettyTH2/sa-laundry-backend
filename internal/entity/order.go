@@ -1,6 +1,8 @@
 package entity
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)	
 
 type Order struct {
 	gorm.Model
@@ -9,7 +11,7 @@ type Order struct {
 	TotalCost int `json:"total_cost"`
 	OrderDate string `json:"order_date"`
 	PickupDate string `json:"pickup_date"`
-	OrderStatus string `json:"orders_status"`
+	OrderStatus string `json:"order_status"`
 	PaymentMethod string `json:"payment_method"`
 	UserID    int  `json:"user_id"`
 
