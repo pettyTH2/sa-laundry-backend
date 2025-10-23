@@ -6,6 +6,7 @@ import (
 	"laundry-backend/internal/repository/postgres"
 	"laundry-backend/internal/usecase"
 	"laundry-backend/internal/router"
+	"laundry-backend/internal/config"
 	"log"
 	"github.com/gofiber/fiber/v2"
 )
@@ -48,7 +49,9 @@ func main() {
 		ClothList: clothListHandler,
 		Order: orderHandler,
 	}
-	
+
+
+	config.SeedDatabase(db)
 	router.SetupRoutes(app, handlers)
 	log.Fatal(app.Listen(":3000"))
 }
