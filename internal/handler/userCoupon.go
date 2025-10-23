@@ -5,6 +5,7 @@ import (
 	"laundry-backend/internal/usecase"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
+	"time"
 )
 
 type UserCouponHandler struct {
@@ -23,6 +24,11 @@ func (h *UserCouponHandler) CreateUserCoupon(c *fiber.Ctx) error {
 	if err := h.userCouponUsecase.CreateUserCoupon(&userCoupon); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
+
+	userCoupon.PointLeft = 50
+	userCoupon.StartDate = time.Now().Format("02/01/2006")
+	userCoupon.ExpireDate = time.Now().AddDate(0, 1, 0).Format("02/01/2006")
+
 	return c.Status(fiber.StatusCreated).JSON(userCoupon)
 }
 
