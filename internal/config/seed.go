@@ -103,6 +103,7 @@ func SeedDatabase(db *gorm.DB) error {
 		clothLists := []entity.ClothList{
 			{Quantity: 15, SubTotalCost: 15, OrderID: 1, ClothID: 1},
 			{Quantity: 3, SubTotalCost: 3, OrderID: 1, ClothID: 3},
+			{Quantity: 5, SubTotalCost: 750, OrderID: 2, ClothID: 6},
 		}
 		for _, clostList := range clothLists {
 			if err := db.Create(&clostList).Error; err != nil {
