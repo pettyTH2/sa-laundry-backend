@@ -14,7 +14,7 @@ var jwtSecretKey = []byte(jwtConfig.SecretKey)
 func RequireAuth(c *fiber.Ctx) error {
     authHeader := c.Get("Authorization")
     if !strings.HasPrefix(authHeader, "Bearer ") {
-        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "missing token"})
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "กรุณา login"})
     }
     tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
