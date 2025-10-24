@@ -24,7 +24,7 @@ func NewUserHandler(userUsecase usecase.UserUsecase) *UserHandler {
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	var user entity.User
 	if err := c.BodyParser(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 
 	if err := h.userUsecase.CreateUser(&user); err != nil {
@@ -41,12 +41,12 @@ func (h *UserHandler) UserLogin(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&loginData); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 
 	user, err := h.userUsecase.UserLogin(loginData.PhoneNumber, loginData.Password)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid phone number or password"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง"})
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -86,7 +86,7 @@ func (h *UserHandler) GetUserByPhoneNumber(c *fiber.Ctx) error {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
     }
     if user == nil {
-        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "user not found"})
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "ไม่เจอผู้ใช้"})
     }
     return c.JSON(user)
 }
@@ -103,12 +103,12 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid user ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID สมาชิกไม่ถูกต้อง"})
 	}
 
 	var user entity.User
 	if err := c.BodyParser(&user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 
 	user.ID = uint(id)

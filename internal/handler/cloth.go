@@ -18,7 +18,7 @@ func NewClothHandler(clothUsecase usecase.ClothUsecase) *ClothHandler {
 func (h *ClothHandler) CreateCloth(c *fiber.Ctx) error {
 	var cloth entity.Cloth
 	if err := c.BodyParser(&cloth); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 	if err := h.clothUsecase.CreateCloth(&cloth); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -47,11 +47,11 @@ func (h *ClothHandler) UpdateCloth(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid cloth ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID เสื้อไม่ถูกต้อง"})
 	}
 	var cloth entity.Cloth
 	if err := c.BodyParser(&cloth); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 	cloth.ID = uint(id)
 	if err := h.clothUsecase.UpdateCloth(&cloth); err != nil {

@@ -18,7 +18,7 @@ func NewCouponHandler(couponUsecase usecase.CouponUsercase) *CouponHandler {
 func (h *CouponHandler) CreateCoupon(c *fiber.Ctx) error {
 	var coupon entity.Coupon
 	if err := c.BodyParser(&coupon); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 	if err := h.couponUsecase.CreateCoupon(&coupon); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -30,14 +30,14 @@ func (h *CouponHandler) GetCouponByID(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid coupon ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID คูปองไม่ถูกต้อง"})
 	}
 	coupon, err := h.couponUsecase.GetCouponByID(id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	if coupon == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "coupon not found"})
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "ไม่เจอคูปอง"})
 	}
 	return c.JSON(coupon)
 }
@@ -54,11 +54,11 @@ func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid coupon ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID คูปองไม่ถูกต้อง"})
 	}
 	var coupon entity.Coupon
 	if err := c.BodyParser(&coupon); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 	coupon.ID = uint(id)
 	if err := h.couponUsecase.UpdateCoupon(&coupon); err != nil {

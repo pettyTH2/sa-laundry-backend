@@ -19,7 +19,7 @@ func NewOrderHandler(orderUsecase usecase.OrderUsecase) *OrderHandler {
 func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	var order entity.Order
 	if err := c.BodyParser(&order); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 
 	order.OrderDate = time.Now().Format("02/01/2006")
@@ -36,7 +36,7 @@ func (h *OrderHandler) GetOrdersByUserID(c *fiber.Ctx) error {
 	idParam := c.Params("user_id")
 	userID, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid user ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID สมาชิกไม่ถูกต้อง"})
 	}
 	orders, err := h.orderUsecase.GetOrdersByUserID(userID)
 	if err != nil {
@@ -57,11 +57,11 @@ func (h *OrderHandler) UpdateOrder(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid order ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID ออร์เดอร์ไม่ถูกต้อง"})
 	}
 	var order entity.Order
 	if err := c.BodyParser(&order); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 	order.ID = uint(id)
 	if err := h.orderUsecase.UpdateOrder(&order); err != nil {
