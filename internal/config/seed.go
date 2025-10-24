@@ -11,9 +11,10 @@ func SeedDatabase(db *gorm.DB) error {
 	db.Model(&entity.User{}).Count(&count)
 	if count == 0 {
 		users := []entity.User{
-			{PhoneNumber: "0811111111", Name: "Jiramet Tangtrairattanakul", Nickname: "Petch", Password: "$2a$10$qoipqMPO15GsAUyKVG0dfOpOXDBqBe39UQTlv7x.Zut1w/tLuXz5W", Role: "Customer"},
-			{PhoneNumber: "0822222222", Name: "Admin User", Nickname: "Admin", Password: "$2a$10$e5DeRyvOZMSThIRY5QLpcepdlVkDbRflRHUvzcvETlFpapk9F2MBW", Role: "Admin"},
-			{PhoneNumber: "0833333333", Name: "Staff User", Nickname: "Staff", Password: "$2a$10$G8BRp8o8FXHJDPZ56PzOSeSJynRFlDlS52MEmBJ9078ztLcg/Kvtq", Role: "LaundryAttendant"},
+			{PhoneNumber: "0811111111", Name: "Jiramet Tangtrairattanakul", Nickname: "Petch", Password: "$2a$10$qoipqMPO15GsAUyKVG0dfOpOXDBqBe39UQTlv7x.Zut1w/tLuXz5W", Role: "customer"},
+			{PhoneNumber: "0822222222", Name: "Admin User", Nickname: "Admin", Password: "$2a$10$e5DeRyvOZMSThIRY5QLpcepdlVkDbRflRHUvzcvETlFpapk9F2MBW", Role: "admin"},
+			{PhoneNumber: "0833333333", Name: "Laundry User", Nickname: "LaundryAttendant", Password: "$2a$10$G8BRp8o8FXHJDPZ56PzOSeSJynRFlDlS52MEmBJ9078ztLcg/Kvtq", Role: "laundryAttendant"},
+			{PhoneNumber: "0844444444", Name: "Cashier User", Nickname: "Cashier", Password: "$2a$10$isl33P5yzwfPcB/YtYxJS.CeiSzuHNe2mKID71aC0Xukxm6lCiWZa", Role: "cashier"},
 		}
 		for _, user := range users {
 			if err := db.Create(&user).Error; err != nil {

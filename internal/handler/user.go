@@ -60,14 +60,10 @@ func (h *UserHandler) UserLogin(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	c.Cookie(&fiber.Cookie{
-    Name:     "jwt",
-    Value:    tokenString,
-    Expires:  time.Now().Add(time.Hour * 72),
-    HTTPOnly: true,
-  	})
-
-	return c.JSON(user)
+	return c.JSON(fiber.Map{
+        "token": tokenString,
+        "user":  user,
+    })
 }
 
 func (h *UserHandler) GetUserByRole(c *fiber.Ctx) error {

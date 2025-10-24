@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+	"strings"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"laundry-backend/internal/config"
@@ -9,22 +11,43 @@ import (
 var jwtConfig = config.LoadJWTConfig()
 var jwtSecretKey = []byte(jwtConfig.SecretKey)
 
-func CreateMemberAuth(c *fiber.Ctx) error {
-	cookie := c.Cookies("jwt")
-	
+func RequireAuth(c *fiber.Ctx) error {
+    authHeader := c.Get("Authorization")
+    if !strings.HasPrefix(authHeader, "Bearer ") {
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "missing token"})
+    }
+    tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
-	token, err := jwt.ParseWithClaims(cookie, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
-      return []byte(jwtSecretKey), nil
-   	})
+    token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(t *jwt.Token) (interface{}, error) {
+        if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+            return nil, fmt.Errorf("unexpected signing method")
+        }
+        return jwtSecretKey, nil
+    })
+    if err != nil || !token.Valid {
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token"})
+    }
 
-	if err != nil || !token.Valid {
-      return c.SendStatus(fiber.StatusUnauthorized)
-  	}
+    claims, ok := token.Claims.(jwt.MapClaims)
+    if !ok {
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid claims"})
+    }
 
-	claim := token.Claims.(jwt.MapClaims)
-	if claim["role"] == "member" {
-		return c.SendStatus(fiber.StatusUnauthorized)
-	}
+    c.Locals("user_claims", claims)
+    return c.Next()
+}
 
-	return c.Next()
+func RequireStaffAuth(c *fiber.Ctx) error {
+    if err := RequireAuth(c); err != nil {
+        return err
+    }
+
+    claims := c.Locals("user_claims").(jwt.MapClaims)
+    role, _ := claims["role"].(string)
+
+    if role != "cashier" && role != "admin" {
+        return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "forbidden: staff only"})
+    }
+
+    return c.Next()
 }
