@@ -86,8 +86,8 @@ func SeedDatabase(db *gorm.DB) error {
 	db.Model(&entity.Order{}).Count(&count)
 	if count == 0 {
 		orders := []entity.Order{
-			{ServiceType: "Machine", TotalCloth: 18, TotalCost: 18, OrderDate: "01/01/2000", PickupDate: "04/01/2000", OrderStatus: "Completed", PaymentMethod: "Package", UserID: 1},
-			{ServiceType: "Dry Clean", TotalCloth: 5, TotalCost: 750, OrderDate: "05/01/2000", PickupDate: "08/01/2000", OrderStatus: "Pending", PaymentMethod: "Cash", UserID: 1},
+			{ServiceType: "Machine", TotalCloth: 18, TotalCost: 18, OrderDate: "01/01/2000", PickupDate: "04/01/2000", OrderStatus: "คำสั่งซื้อเสร็จสิ้น", PaymentMethod: "Package", UserID: 1},
+			{ServiceType: "Dry Clean", TotalCloth: 5, TotalCost: 750, OrderDate: "05/01/2000", PickupDate: "08/01/2000", OrderStatus: "รอดำเนินการ", PaymentMethod: "Cash", UserID: 1},
 		}
 		for _, order := range orders {
 			if err := db.Create(&order).Error; err != nil {
