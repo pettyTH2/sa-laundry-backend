@@ -48,14 +48,30 @@ func SeedDatabase(db *gorm.DB) error {
 		clothes := []entity.Cloth{
 			{ClothName: "Long-Shirt", ClothPrice: 25, Category: "Wash Dry"},
 			{ClothName: "Short-Shirt", ClothPrice: 20, Category: "Wash Dry"},
+			{ClothName: "Long T-Shirt", ClothPrice: 25, Category: "Wash Dry"},
+			{ClothName: "Short T-Shirt", ClothPrice: 20, Category: "Wash Dry"},
+			{ClothName: "Pant", ClothPrice: 25, Category: "Wash Dry"},
 			{ClothName: "Short", ClothPrice: 20, Category: "Wash Dry"},
+			{ClothName: "Jean", ClothPrice: 25, Category: "Wash Dry"},
+			{ClothName: "Long Skirt", ClothPrice: 25, Category: "Wash Dry"},
+			{ClothName: "Short Skirt", ClothPrice: 20, Category: "Wash Dry"},
 			{ClothName: "Blouse", ClothPrice: 25, Category: "Wash Dry"},
+			{ClothName: "Long Blouse", ClothPrice: 30, Category: "Wash Dry"},
 			{ClothName: "Dress", ClothPrice: 80, Category: "Wash Dry"},
+			{ClothName: "Towel", ClothPrice: 30, Category: "Wash Dry"},
+			{ClothName: "Pillow Case", ClothPrice: 15, Category: "Wash Dry"},
 			{ClothName: "Suit", ClothPrice: 150, Category: "Dry Clean"},
 			{ClothName: "Safari Suit", ClothPrice: 150, Category: "Dry Clean"},
 			{ClothName: "Sweater", ClothPrice: 250, Category: "Dry Clean"},
 			{ClothName: "Jacket", ClothPrice: 120, Category: "Dry Clean"},
 			{ClothName: "Dress", ClothPrice: 150, Category: "Dry Clean"},
+			{ClothName: "Shirt", ClothPrice: 80, Category: "Dry Clean"},
+			{ClothName: "Blouse", ClothPrice: 80, Category: "Dry Clean"},
+			{ClothName: "Skirt", ClothPrice: 80, Category: "Dry Clean"},
+			{ClothName: "Pant", ClothPrice: 80, Category: "Dry Clean"},
+			{ClothName: "Scarf", ClothPrice: 60, Category: "Dry Clean"},
+			{ClothName: "Necktie", ClothPrice: 50, Category: "Dry Clean"},
+			{ClothName: "Coat", ClothPrice: 250, Category: "Dry Clean"},
 		}
 		for _, cloth := range clothes {
 			if err := db.Create(&cloth).Error; err != nil {
@@ -86,7 +102,7 @@ func SeedDatabase(db *gorm.DB) error {
 	db.Model(&entity.Order{}).Count(&count)
 	if count == 0 {
 		orders := []entity.Order{
-			{ServiceType: "Machine", TotalCloth: 18, TotalCost: 18, OrderDate: "01/01/2000", PickupDate: "04/01/2000", OrderStatus: "คำสั่งซื้อเสร็จสิ้น", PaymentMethod: "Package", UserID: 1},
+			{ServiceType: "Machine", TotalCloth: 18, TotalCost: 18, OrderDate: "01/01/2000", PickupDate: "04/01/2000", OrderStatus: "คำสั่งซื้อเสร็จสิ้น", PaymentMethod: "Coupon", UserID: 1},
 			{ServiceType: "Dry Clean", TotalCloth: 5, TotalCost: 750, OrderDate: "05/01/2000", PickupDate: "08/01/2000", OrderStatus: "รอดำเนินการ", PaymentMethod: "Cash", UserID: 1},
 		}
 		for _, order := range orders {
@@ -104,7 +120,7 @@ func SeedDatabase(db *gorm.DB) error {
 		clothLists := []entity.ClothList{
 			{Quantity: 15, SubTotalCost: 15, OrderID: 1, ClothID: 1},
 			{Quantity: 3, SubTotalCost: 3, OrderID: 1, ClothID: 3},
-			{Quantity: 5, SubTotalCost: 750, OrderID: 2, ClothID: 6},
+			{Quantity: 5, SubTotalCost: 750, OrderID: 2, ClothID: 15},
 		}
 		for _, clostList := range clothLists {
 			if err := db.Create(&clostList).Error; err != nil {
