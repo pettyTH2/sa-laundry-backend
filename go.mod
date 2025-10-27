@@ -12,6 +12,8 @@ require (
 require (
 	github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
 	github.com/gofiber/jwt/v2 v2.2.7 // indirect
+	github.com/jfeliu007/goplantuml v1.6.3 // indirect
+	github.com/spf13/afero v1.8.2 // indirect
 )
 
 require (

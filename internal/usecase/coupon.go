@@ -5,26 +5,26 @@ import (
 	"laundry-backend/internal/repository"
 )
 
-type CouponUsercase struct {
+type CouponUsecase struct {
 	couponRepo repository.CouponRepository
 }
 
-func NewCouponUsecase(couponRepo repository.CouponRepository) *CouponUsercase {
-	return &CouponUsercase{couponRepo: couponRepo}
+func NewCouponUsecase(couponRepo repository.CouponRepository) *CouponUsecase {
+	return &CouponUsecase{couponRepo: couponRepo}
 }
 
-func (uc *CouponUsercase) CreateCoupon(coupon *entity.Coupon) error {
+func (uc *CouponUsecase) CreateCoupon(coupon *entity.Coupon) error {
 	return uc.couponRepo.CreateCoupon(coupon)
 }
 
-func (uc *CouponUsercase) GetCouponByID(id int) (*entity.Coupon, error) {
+func (uc *CouponUsecase) GetCouponByID(id int) (*entity.Coupon, error) {
 	return uc.couponRepo.GetByID(id)
 }
 
-func (uc *CouponUsercase) GetAllCoupons() ([]entity.Coupon, error) {
+func (uc *CouponUsecase) GetAllCoupons() ([]entity.Coupon, error) {
 	return uc.couponRepo.GetAllCoupons()
 }
 
-func (uc *CouponUsercase) UpdateCoupon(coupon *entity.Coupon) error {
+func (uc *CouponUsecase) UpdateCoupon(coupon *entity.Coupon) error {
 	return uc.couponRepo.Update(coupon)
 }

@@ -8,10 +8,10 @@ import (
 )
 
 type CouponHandler struct {
-	couponUsecase usecase.CouponUsercase
+	couponUsecase usecase.CouponUsecase
 }
 
-func NewCouponHandler(couponUsecase usecase.CouponUsercase) *CouponHandler {
+func NewCouponHandler(couponUsecase usecase.CouponUsecase) *CouponHandler {
 	return &CouponHandler{couponUsecase: couponUsecase}
 }
 
