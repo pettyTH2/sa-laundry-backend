@@ -1,0 +1,66 @@
+@startuml
+' horizontal layout like your example
+left to right direction
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam titleFontSize 16
+
+title SA Laundry - Component Diagram (Frontend / Backend / Database)
+
+package "<<subsystem>> Frontend" {
+  component "Web App\n(UI)" as WebApp
+  component "Mobile App\n(UI)" as MobileApp
+  WebApp -right-> MobileApp #transparent
+}
+
+package "<<subsystem>> Backend" {
+  component "API Router\n(Fiber)" as Router
+  component "Auth Middleware\n(JWT, role checks)" as Auth
+  component "HTTP Handlers\n(User, Order, Coupon,...)" as Handlers
+  component "Usecases / Services\n(Business logic)" as Usecases
+  component "Repository Interfaces\n(UserRepo, OrderRepo,...)" as RepoIfaces
+  component "Postgres Repos\n(postgres/*.go)" as PostgresImpl
+  component "Migrations & Seed\n(AutoMigrate / SeedDatabase)" as Migrations
+
+  Router --> Auth
+  Auth --> Handlers
+  Handlers --> Usecases
+  Usecases --> RepoIfaces
+  RepoIfaces <.. PostgresImpl
+  Migrations --> PostgresImpl
+}
+
+package "<<subsystem>> Database" {
+  database "Postgres DB" as DB
+  component "PGAdmin / Admin" as Admin
+  PostgresImpl --> DB
+  Migrations --> DB
+  Admin -down- DB
+}
+
+' client interaction
+actor Client
+Client --> WebApp : use UI
+Client --> MobileApp : use UI
+WebApp --> Router : HTTP (JSON / Authorization)
+MobileApp --> Router : HTTP (JSON / Authorization)
+
+' auth & token flow (note)
+note left of Auth
+  JWT signed with secret (from .env)
+  Middleware validates Authorization: Bearer <token>
+end note
+
+' data & domain
+component "Domain Entities\n(User, Order, Cloth, ClothList, Coupon, UserCoupon)" as Entities
+PostgresImpl --> Entities : persist / load
+Usecases --> Entities : operate on domain models
+Handlers --> Entities : map JSON <-> Entities
+
+' deployment / config note
+component "Config\n(.env, LoadDBConfig)" as Config
+Config --> Router
+Config --> Auth
+Config --> Migrations
+
+@enduml

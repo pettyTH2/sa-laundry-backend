@@ -20,13 +20,13 @@ func (r *OrderRepository) CreateOrder(order *entity.Order) error {
 
 func (r *OrderRepository) GetByUserID(userID int) ([]entity.Order, error) {
 	var orders []entity.Order
-	err := r.db.Preload("User").Preload("ClothLists").Where("user_id = ?", userID).Find(&orders).Error
+	err := r.db.Preload("User").Preload("ClothList").Where("user_id = ?", userID).Find(&orders).Error
 	return orders, err
 }
 
 func (r *OrderRepository) GetAllOrders() ([]entity.Order, error) {
 	var orders []entity.Order
-	err := r.db.Preload("User").Preload("ClothLists").Find(&orders).Error
+	err := r.db.Preload("User").Preload("ClothList").Find(&orders).Error
 	return orders, err
 }
 
