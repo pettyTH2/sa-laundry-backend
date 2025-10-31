@@ -3,6 +3,7 @@ package usecase
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/repository"
+	"github.com/google/uuid"
 )
 
 type CouponUsecase struct {
@@ -17,7 +18,7 @@ func (uc *CouponUsecase) CreateCoupon(coupon *entity.Coupon) error {
 	return uc.couponRepo.CreateCoupon(coupon)
 }
 
-func (uc *CouponUsecase) GetCouponByID(id int) (*entity.Coupon, error) {
+func (uc *CouponUsecase) GetCouponByID(id uuid.UUID) (*entity.Coupon, error) {
 	return uc.couponRepo.GetByID(id)
 }
 

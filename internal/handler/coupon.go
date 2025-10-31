@@ -3,8 +3,8 @@ package handler
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
-	"strconv"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type CouponHandler struct {
@@ -28,7 +28,7 @@ func (h *CouponHandler) CreateCoupon(c *fiber.Ctx) error {
 
 func (h *CouponHandler) GetCouponByID(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-	id, err := strconv.Atoi(idParam)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID คูปองไม่ถูกต้อง"})
 	}
@@ -52,7 +52,7 @@ func (h *CouponHandler) GetAllCoupons(c *fiber.Ctx) error {
 
 func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-	id, err := strconv.Atoi(idParam)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID คูปองไม่ถูกต้อง"})
 	}
@@ -60,7 +60,7 @@ func (h *CouponHandler) UpdateCoupon(c *fiber.Ctx) error {
 	if err := c.BodyParser(&coupon); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
-	coupon.ID = uint(id)
+	coupon.ID = id
 	if err := h.couponUsecase.UpdateCoupon(&coupon); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

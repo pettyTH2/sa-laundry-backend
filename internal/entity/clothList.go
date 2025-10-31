@@ -1,14 +1,16 @@
 package entity
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+)
 
 type ClothList struct {
-	gorm.Model
-	Quantity int `json:"quantity" gorm:"not null"`
-	SubTotalCost int `json:"sub_total_cost" gorm:"not null"`
-	OrderID int `json:"order_id" gorm:"not null"`
-	ClothID int `json:"cloth_id" gorm:"not null"`
-
+	ID           uuid.UUID      `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	Quantity     int            `json:"quantity" gorm:"not null"`
+	SubTotalCost int            `json:"sub_total_cost" gorm:"not null"`
+	OrderID      uuid.UUID      `json:"order_id" gorm:"type:uuid;not null"`
+	ClothID      uuid.UUID      `json:"cloth_id" gorm:"type:uuid;not null"`
+	
 	Order Order `json:"order" gorm:"foreignKey:OrderID"`
 	Cloth Cloth `json:"cloth" gorm:"foreignKey:ClothID"`
 }

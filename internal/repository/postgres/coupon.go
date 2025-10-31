@@ -3,6 +3,7 @@ package postgres
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/repository"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +19,7 @@ func (r *CouponRepository) CreateCoupon(coupon *entity.Coupon) error {
 	return r.db.Create(coupon).Error
 }
 
-func (r *CouponRepository) GetByID(id int) (*entity.Coupon, error) {
+func (r *CouponRepository) GetByID(id uuid.UUID) (*entity.Coupon, error) {
 	var coupon entity.Coupon
 	err := r.db.First(&coupon, id).Error
 	return &coupon, err

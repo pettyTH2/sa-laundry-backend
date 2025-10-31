@@ -3,9 +3,10 @@ package handler
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
-	"github.com/gofiber/fiber/v2"
-	"strconv"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type UserCouponHandler struct {
@@ -17,24 +18,59 @@ func NewUserCouponHandler(userCouponUsecase usecase.UserCouponUsecase) *UserCoup
 }
 
 func (h *UserCouponHandler) CreateUserCoupon(c *fiber.Ctx) error {
-	var userCoupon entity.UserCoupon
-	if err := c.BodyParser(&userCoupon); err != nil {
+	var req struct {
+		PointLeft  int       `json:"point_left"`
+		StartDate  time.Time `json:"start_date"`
+		ExpireDate time.Time `json:"expire_date"`
+		UserID     string    `json:"user_id"`
+		CouponID   string    `json:"coupon_id"`
+	}
+
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
+
+	// Parse UUIDs
+	userID, err := uuid.Parse(req.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "User ID ไม่ถูกต้อง"})
+	}
+
+	couponID, err := uuid.Parse(req.CouponID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Coupon ID ไม่ถูกต้อง"})
+	}
+
+	// Create UserCoupon entity
+	userCoupon := entity.UserCoupon{
+		PointLeft:  req.PointLeft,
+		StartDate:  req.StartDate,
+		ExpireDate: req.ExpireDate,
+		UserID:     userID,
+		CouponID:   couponID,
+	}
+
+	// Set default values if not provided
+	if userCoupon.PointLeft == 0 {
+		userCoupon.PointLeft = 50
+	}
+	if userCoupon.StartDate.IsZero() {
+		userCoupon.StartDate = time.Now()
+	}
+	if userCoupon.ExpireDate.IsZero() {
+		userCoupon.ExpireDate = time.Now().AddDate(0, 1, 0)
+	}
+
 	if err := h.userCouponUsecase.CreateUserCoupon(&userCoupon); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-
-	userCoupon.PointLeft = 50
-	userCoupon.StartDate = time.Now().Format("02/01/2006")
-	userCoupon.ExpireDate = time.Now().AddDate(0, 1, 0).Format("02/01/2006")
 
 	return c.Status(fiber.StatusCreated).JSON(userCoupon)
 }
 
 func (h *UserCouponHandler) GetUserCouponsByUserID(c *fiber.Ctx) error {
 	idParam := c.Params("user_id")
-	userID, err := strconv.Atoi(idParam)
+	userID, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID ผู้ใช้ไม่ถูกต้อง"})
 	}
@@ -47,7 +83,7 @@ func (h *UserCouponHandler) GetUserCouponsByUserID(c *fiber.Ctx) error {
 
 func (h *UserCouponHandler) GetUserCouponsByCouponID(c *fiber.Ctx) error {
 	idParam := c.Params("coupon_id")
-	couponID, err := strconv.Atoi(idParam)
+	couponID, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID คูปองไม่ถูกต้อง"})
 	}
@@ -68,7 +104,7 @@ func (h *UserCouponHandler) GetAllUserCoupons(c *fiber.Ctx) error {
 
 func (h *UserCouponHandler) UpdateUserCoupon(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-	id, err := strconv.Atoi(idParam)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID คูปองของผู้ใช้ไม่ถูกต้อง"})
 	}
@@ -76,7 +112,7 @@ func (h *UserCouponHandler) UpdateUserCoupon(c *fiber.Ctx) error {
 	if err := c.BodyParser(&userCoupon); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
-	userCoupon.ID = uint(id)
+	userCoupon.ID = id
 	if err := h.userCouponUsecase.UpdateUserCoupon(&userCoupon); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

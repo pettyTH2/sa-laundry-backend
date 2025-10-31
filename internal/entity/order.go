@@ -1,22 +1,24 @@
 package entity
 
 import (
-	"gorm.io/gorm"
-)	
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Order struct {
-	gorm.Model
-	ServiceType string `json:"service_type" gorm:"not null"`
-	TotalCloth int `json:"total_cloth" gorm:"not null"`
-	TotalCost int `json:"total_cost" gorm:"not null"`
-	OrderDate string `json:"order_date"`
-	PickupDate string `json:"pickup_date"`
-	OrderStatus string `json:"order_status" gorm:"not null"`
-	PaymentMethod string `json:"payment_method" gorm:"not null"`
-	UserID    int  `json:"user_id" gorm:"not null"`
+	ID            uuid.UUID `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	ServiceType   string    `json:"service_type" gorm:"not null"`
+	TotalCloth    int       `json:"total_cloth" gorm:"not null"`
+	TotalCost     int       `json:"total_cost" gorm:"not null"`
+	OrderDate     time.Time `json:"order_date" gorm:"type:timestamp"`
+	PickupDate    time.Time `json:"pickup_date" gorm:"type:timestamp"`
+	OrderStatus   string    `json:"order_status" gorm:"not null"`
+	PaymentMethod string    `json:"payment_method" gorm:"not null"`
+	UserID        uuid.UUID `json:"user_id" gorm:"type:uuid;not null"`
 
-	User User   `json:"user" gorm:"foreignKey:UserID"`
-	ClothList []ClothList `json:"cloth_list" gorm:"foreignKey:OrderID"`
+	User       User        `json:"user" gorm:"foreignKey:UserID"`
+	ClothLists []ClothList `json:"cloth_lists" gorm:"foreignKey:OrderID"`
 }
 
 func (Order) TableName() string {

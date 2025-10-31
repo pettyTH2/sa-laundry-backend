@@ -24,9 +24,9 @@ func (r *UserRepository) CreateUser(user *entity.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *UserRepository) UserLogin(phoneNumber, password string) (*entity.User, error) {
+func (r *UserRepository) UserLogin(Id, password string) (*entity.User, error) {
 	var user entity.User
-	result := r.db.Where("phone_number = ?", phoneNumber).First(&user)
+	result := r.db.Where("phone_number = ?", Id).First(&user)
 	
 	if result.Error != nil {
 		return nil, result.Error
@@ -46,9 +46,9 @@ func (r *UserRepository) GetByRole(Role string) ([]entity.User, error) {
 	return users, err
 }
 
-func (r *UserRepository) GetByPhoneNumber(phoneNumber string) (*entity.User, error) {
+func (r *UserRepository) GetById(id string) (*entity.User, error) {
 	var user entity.User
-	err := r.db.Where("phone_number = ?", phoneNumber).Find(&user).Error
+	err := r.db.Where("id = ?", id).Find(&user).Error
 	return &user, err
 }
 

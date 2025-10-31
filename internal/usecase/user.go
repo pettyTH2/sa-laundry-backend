@@ -25,8 +25,8 @@ func (uc *UserUsecase) GetUserByRole(role string) ([]entity.User, error) {
 	return uc.userRepo.GetByRole(role)
 }
 
-func (uc *UserUsecase) GetUserByPhoneNumber(phoneNumber string) (*entity.User, error) {
-	return uc.userRepo.GetByPhoneNumber(phoneNumber)
+func (uc *UserUsecase) GetUserById(id string) (*entity.User, error) {
+	return uc.userRepo.GetById(id)
 }
 
 func (uc *UserUsecase) GetAllUsers() ([]entity.User, error) {

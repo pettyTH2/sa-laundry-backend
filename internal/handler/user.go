@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"laundry-backend/internal/config"
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
-	"laundry-backend/internal/config"
+	"github.com/google/uuid"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"time"
-	"strconv"
 )
 
 var jwtConfig = config.LoadJWTConfig()
@@ -52,7 +53,7 @@ func (h *UserHandler) UserLogin(c *fiber.Ctx) error {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["phone_number"] = user.PhoneNumber
-	claims["role"] = user.Role	
+	claims["role"] = user.Role
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	tokenString, err := token.SignedString(jwtSecretKey)
@@ -61,35 +62,36 @@ func (h *UserHandler) UserLogin(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-        "token": tokenString,
-        "user":  user,
-    })
+		"token": tokenString,
+		"role":  user.Role,
+		"user":  user,
+	})
 }
 
 func (h *UserHandler) GetUserByRole(c *fiber.Ctx) error {
-    role := c.Params("role")
-    users, err := h.userUsecase.GetUserByRole(role)
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-    }
-    return c.JSON(users)
+	role := c.Params("role")
+	users, err := h.userUsecase.GetUserByRole(role)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(users)
 }
 
-func (h *UserHandler) GetUserByPhoneNumber(c *fiber.Ctx) error {
-    phoneNumber := c.Params("phone_number")
-    user, err := h.userUsecase.GetUserByPhoneNumber(phoneNumber)
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-    }
-    if user == nil {
-        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "ไม่เจอผู้ใช้"})
-    }
-    return c.JSON(user)
+func (h *UserHandler) GetUserById(c *fiber.Ctx) error {
+	id := c.Params("id")
+	user, err := h.userUsecase.GetUserById(id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	if user == nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "ไม่เจอผู้ใช้"})
+	}
+	return c.JSON(user)
 }
 
 func (h *UserHandler) GetAllUsers(c *fiber.Ctx) error {
 	users, err := h.userUsecase.GetAllUsers()
-	if err != nil {	
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.JSON(users)
@@ -97,7 +99,7 @@ func (h *UserHandler) GetAllUsers(c *fiber.Ctx) error {
 
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-	id, err := strconv.Atoi(idParam)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID สมาชิกไม่ถูกต้อง"})
 	}
@@ -107,7 +109,7 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 
-	user.ID = uint(id)
+	user.ID = id
 	if err := h.userUsecase.UpdateUser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

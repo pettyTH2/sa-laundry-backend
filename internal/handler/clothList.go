@@ -3,8 +3,8 @@ package handler
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
-	"strconv"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type ClothListHandler struct {
@@ -28,7 +28,7 @@ func (h *ClothListHandler) CreateClothList(c *fiber.Ctx) error {
 
 func (h *ClothListHandler) GetClothListsByOrderID(c *fiber.Ctx) error {
 	idParam := c.Params("order_id")
-	orderID, err := strconv.Atoi(idParam)	
+	orderID, err := uuid.Parse(idParam)	
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID ออร์เดอร์ไม่ถูกต้อง"})
 	}
@@ -41,7 +41,7 @@ func (h *ClothListHandler) GetClothListsByOrderID(c *fiber.Ctx) error {
 
 func (h *ClothListHandler) UpdateClothList(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-	id, err := strconv.Atoi(idParam)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID รายการเสื้อไม่ถูกต้อง"})
 	}
@@ -49,7 +49,7 @@ func (h *ClothListHandler) UpdateClothList(c *fiber.Ctx) error {
 	if err := c.BodyParser(&clothList); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
-	clothList.ID = uint(id)
+	clothList.ID = id
 	if err := h.clothListUsecase.UpdateClothList(&clothList); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

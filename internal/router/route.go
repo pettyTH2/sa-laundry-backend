@@ -1,37 +1,41 @@
 package router
+
 import (
 	"laundry-backend/internal/handler"
-	"github.com/gofiber/fiber/v2"
 	"laundry-backend/internal/middleware"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type Handlers struct {
-	User *handler.UserHandler
-	Coupon *handler.CouponHandler
+	User       *handler.UserHandler
+	Coupon     *handler.CouponHandler
 	UserCoupon *handler.UserCouponHandler
-	Cloth *handler.ClothHandler
-	ClothList *handler.ClothListHandler
-	Order *handler.OrderHandler
+	Cloth      *handler.ClothHandler
+	ClothList  *handler.ClothListHandler
+	Order      *handler.OrderHandler
 }
 
 func SetupRoutes(app *fiber.App, h *Handlers) {
 
-	users := app.Group("/users")
-	users.Post("/login", h.User.UserLogin)
+	// Public routes (no auth required)
+	app.Post("/users/login", h.User.UserLogin)
 
+	// Protected routes (auth required)
 	app.Use(middleware.RequireAuth)
 
-	users.Use("/register", middleware.RequireStaffAuth)
-	users.Post("/register", h.User.CreateUser)
+	// User routes
+	users := app.Group("/users")
+	users.Post("/register", middleware.RequireStaffAuth, h.User.CreateUser)
 	users.Get("/role/:role", h.User.GetUserByRole)
-	users.Get("/phone/:phone_number", h.User.GetUserByPhoneNumber)
+	users.Get("/id/:id", h.User.GetUserById)
 	users.Get("/", h.User.GetAllUsers)
 	users.Put("/:id", h.User.UpdateUser)
 
 	coupons := app.Group("/coupons")
-	coupons.Post("/", h.Coupon.CreateCoupon) 
-	coupons.Get("/:id", h.Coupon.GetCouponByID) 
-	coupons.Get("/", h.Coupon.GetAllCoupons) 
+	coupons.Post("/", h.Coupon.CreateCoupon)
+	coupons.Get("/:id", h.Coupon.GetCouponByID)
+	coupons.Get("/", h.Coupon.GetAllCoupons)
 	coupons.Put("/:id", h.Coupon.UpdateCoupon)
 
 	userCoupons := app.Group("/user_coupons")
@@ -57,4 +61,5 @@ func SetupRoutes(app *fiber.App, h *Handlers) {
 	orders.Get("/user/:user_id", h.Order.GetOrdersByUserID)
 	orders.Get("/", h.Order.GetAllOrders)
 	orders.Put("/:id", h.Order.UpdateOrder)
+	orders.Get("/:id", h.Order.GetOrderByID)
 }

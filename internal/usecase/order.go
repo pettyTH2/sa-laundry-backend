@@ -3,6 +3,7 @@ package usecase
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/repository"
+	"github.com/google/uuid"
 )
 
 type OrderUsecase struct {
@@ -17,7 +18,7 @@ func (uc *OrderUsecase) CreateOrder(order *entity.Order) error {
 	return uc.orderRepo.CreateOrder(order)
 }
 
-func (uc *OrderUsecase) GetOrdersByUserID(userID int) ([]entity.Order, error) {
+func (uc *OrderUsecase) GetOrdersByUserID(userID uuid.UUID) ([]entity.Order, error) {
 	return uc.orderRepo.GetByUserID(userID)
 }
 
@@ -27,4 +28,8 @@ func (uc *OrderUsecase) GetAllOrders() ([]entity.Order, error) {
 
 func (uc *OrderUsecase) UpdateOrder(order *entity.Order) error {
 	return uc.orderRepo.Update(order)
+}
+
+func (uc *OrderUsecase) GetOrderByID(id uuid.UUID) (*entity.Order, error) {
+	return uc.orderRepo.GetByID(id)
 }

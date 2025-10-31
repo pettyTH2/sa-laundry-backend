@@ -3,6 +3,7 @@ package usecase
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/repository"
+	"github.com/google/uuid"
 )
 
 type ClothListUsecase struct {
@@ -17,7 +18,7 @@ func (uc *ClothListUsecase) CreateClothList(clothList *entity.ClothList) error {
 	return uc.clothListRepo.CreateClothList(clothList)
 }
 
-func (uc *ClothListUsecase) GetClothListsByOrderID(orderID int) ([]entity.ClothList, error) {
+func (uc *ClothListUsecase) GetClothListsByOrderID(orderID uuid.UUID) ([]entity.ClothList, error) {
 	return uc.clothListRepo.GetByOrderID(orderID)
 }
 

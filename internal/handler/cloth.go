@@ -3,8 +3,8 @@ package handler
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
-	"strconv"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type ClothHandler struct {
@@ -45,7 +45,7 @@ func (h *ClothHandler) GetAllCloths(c *fiber.Ctx) error {
 
 func (h *ClothHandler) UpdateCloth(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-	id, err := strconv.Atoi(idParam)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID เสื้อไม่ถูกต้อง"})
 	}
@@ -53,7 +53,7 @@ func (h *ClothHandler) UpdateCloth(c *fiber.Ctx) error {
 	if err := c.BodyParser(&cloth); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
-	cloth.ID = uint(id)
+	cloth.ID = id
 	if err := h.clothUsecase.UpdateCloth(&cloth); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

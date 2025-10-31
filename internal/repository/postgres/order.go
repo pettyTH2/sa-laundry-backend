@@ -3,6 +3,7 @@ package postgres
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/repository"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +19,7 @@ func (r *OrderRepository) CreateOrder(order *entity.Order) error {
 	return r.db.Create(order).Error
 }
 
-func (r *OrderRepository) GetByUserID(userID int) ([]entity.Order, error) {
+func (r *OrderRepository) GetByUserID(userID uuid.UUID) ([]entity.Order, error) {
 	var orders []entity.Order
 	err := r.db.Preload("User").Preload("ClothLists").Where("user_id = ?", userID).Find(&orders).Error
 	return orders, err
@@ -32,4 +33,10 @@ func (r *OrderRepository) GetAllOrders() ([]entity.Order, error) {
 
 func (r *OrderRepository) Update(order *entity.Order) error {
 	return r.db.Save(order).Error
+}
+
+func (r *OrderRepository) GetByID(id uuid.UUID) (*entity.Order, error) {
+	var order entity.Order
+	err := r.db.Preload("User").Preload("ClothLists").Where("id = ?", id).First(&order).Error
+	return &order, err
 }

@@ -3,9 +3,10 @@ package handler
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/usecase"
-	"github.com/gofiber/fiber/v2"
 	"time"
-	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type OrderHandler struct {
@@ -22,8 +23,8 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
 
-	order.OrderDate = time.Now().Format("02/01/2006")
-	order.PickupDate = time.Now().AddDate(0, 0, 3).Format("02/01/2006")
+	order.OrderDate = time.Now()
+	order.PickupDate = time.Now().AddDate(0, 0, 3)
 
 	if err := h.orderUsecase.CreateOrder(&order); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
@@ -34,7 +35,7 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 
 func (h *OrderHandler) GetOrdersByUserID(c *fiber.Ctx) error {
 	idParam := c.Params("user_id")
-	userID, err := strconv.Atoi(idParam)
+	userID, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID สมาชิกไม่ถูกต้อง"})
 	}
@@ -55,7 +56,7 @@ func (h *OrderHandler) GetAllOrders(c *fiber.Ctx) error {
 
 func (h *OrderHandler) UpdateOrder(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-	id, err := strconv.Atoi(idParam)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID ออร์เดอร์ไม่ถูกต้อง"})
 	}
@@ -63,8 +64,21 @@ func (h *OrderHandler) UpdateOrder(c *fiber.Ctx) error {
 	if err := c.BodyParser(&order); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ข้อมูลไม่ถูกต้อง"})
 	}
-	order.ID = uint(id)
+	order.ID = id
 	if err := h.orderUsecase.UpdateOrder(&order); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(order)
+}
+
+func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
+	idParam := c.Params("id")
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ID ออร์เดอร์ไม่ถูกต้อง"})
+	}
+	order, err := h.orderUsecase.GetOrderByID(id)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.JSON(order)

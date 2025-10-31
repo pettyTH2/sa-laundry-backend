@@ -3,6 +3,7 @@ package postgres
 import (
 	"laundry-backend/internal/entity"
 	"laundry-backend/internal/repository"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )	
 
@@ -18,13 +19,13 @@ func (r *UserCouponRepository) CreateUserCoupon(userCoupon *entity.UserCoupon) e
 	return r.db.Create(userCoupon).Error
 }
 
-func (r *UserCouponRepository) GetByUserID(userID int) ([]entity.UserCoupon, error) {
+func (r *UserCouponRepository) GetByUserID(userID uuid.UUID) ([]entity.UserCoupon, error) {
 	var userCoupons []entity.UserCoupon
 	err := r.db.Preload("User").Preload("Coupon").Where("user_id = ?", userID).Find(&userCoupons).Error
 	return userCoupons, err
 }
 
-func (r *UserCouponRepository) GetByCouponID(couponID int) ([]entity.UserCoupon, error) {
+func (r *UserCouponRepository) GetByCouponID(couponID uuid.UUID) ([]entity.UserCoupon, error) {
 	var userCoupons []entity.UserCoupon
 	err := r.db.Preload("User").Preload("Coupon").Where("coupon_id = ?", couponID).Find(&userCoupons).Error
 	return userCoupons, err
